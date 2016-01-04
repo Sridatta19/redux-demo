@@ -1,6 +1,27 @@
 var webpack = require('webpack');
 var path = require('path');
 
+const BABEL_QUERY = {
+  presets: ['react', 'es2015'],
+  plugins: [
+    ['transform-object-rest-spread'],
+    ['transform-class-properties'],
+    ['transform-decorators-legacy'],
+    [
+      'react-transform',
+      {
+        transforms: [
+          {
+            transform: 'react-transform-hmr',
+            imports:    ['react'],
+            locals:     ['module']
+          }
+        ]
+      }
+    ]
+  ]
+}
+
 module.exports = {
   devtool: 'source-map',
   entry: {
@@ -17,6 +38,7 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
+    new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.NoErrorsPlugin()
   ],
   module: {
@@ -24,7 +46,8 @@ module.exports = {
       {
         test: /\.jsx?$/,
         include: path.join(__dirname, 'src'),
-        loader: 'react-hot!babel',
+        loader: 'babel',
+        query: BABEL_QUERY
       },
       {
         test: /\.sass?$/,
